@@ -20,7 +20,8 @@ phases:
   build:
    commands:
      - echo "Building docker image"
-     - docker build --build-arg JASYPT_ENCRYPTOR_PASSWORD=$JASYPT_PASSWORD -t $ECR_REPO_URL:$IMAGE_TAG .
+     - echo "Secure PWD::$JASYPT_PASSWORD"
+     - docker build --build-arg ENCRYPTOR_PASSWORD=$JASYPT_PASSWORD -t $ECR_REPO_URL:$IMAGE_TAG .
      - docker tag $ECR_REPO_URL:$IMAGE_TAG $ECR_REPO_URL:latest
      - echo "docker build completed"
   
