@@ -20,6 +20,7 @@ phases:
      - echo "docker build completed"
   
   post_build:
+   commands:
      - echo "Puhsing docker build into $ECR_REPO_URL"
      - echo docker push $ECR_REPO_URL:$IMAGE_TAG
      - echo docker push $ECR_REPO_URL:latest
