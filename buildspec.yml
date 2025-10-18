@@ -1,17 +1,17 @@
 version: 0.2
 env:
  parameter-store:
-   JASYPT_ENCRYPTOR_PASSWORD: "my_password" 
+   JASYPT_PASSWORD: "my_password" 
    
 
 phases:
   pre_build:
    commands:
      - echo "maven build"
-     - mvn clean install
+     - mvn clean install -Djaspyt.encryptor.password=$JASYPT_PASSWORD
      - echo "Loggin into Aamzon ECR"
      - ECR_REPO_URL=733537661031.dkr.ecr.ap-south-1.amazonaws.com/simple-docker-service-06f5939b5509 
-     - aws ecr get-login-password --region ap-south-1 | docker login --username aws --password-stdin $ECR_REPO_URL
+     - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin $ECR_REPO_URL
      - echo "Setting image tag"
      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
      - IMAGE_TAG=$(COMMIT_HASH:=latest)
