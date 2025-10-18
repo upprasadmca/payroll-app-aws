@@ -8,6 +8,7 @@ phases:
   pre_build:
    commands:
      - echo "maven build"
+     - echo "Secure PWD::$JASYPT_PASSWORD"
      - mvn clean install -Djasypt.encryptor.password=$JASYPT_PASSWORD
      - echo "Loggin into Aamzon ECR"
      - ECR_REPO_URL=733537661031.dkr.ecr.ap-south-1.amazonaws.com/simple-docker-service-06f5939b5509 
