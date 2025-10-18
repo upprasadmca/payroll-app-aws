@@ -1,10 +1,14 @@
 version: 0.2
+env:
+ parameter-store:
+   JASYPT_ENCRYPTOR_PASSWORD: "my_password" 
+   
 
 phases:
   pre_build:
    commands:
      - echo "maven build"
-     - mvn clean install
+     - mvn clean install -Djasypt.encryptor.password=$JASYPT_ENCRYPTOR_PASSWORD
      - echo "Loggin into Aamzon ECR"
      - ECR_REPO_URL=733537661031.dkr.ecr.ap-south-1.amazonaws.com/simple-docker-service-06f5939b5509 
      - aws ecr get-login-password --region ap-south-a | docker login --username aws --password-std-in $ECR_REPO_URL
