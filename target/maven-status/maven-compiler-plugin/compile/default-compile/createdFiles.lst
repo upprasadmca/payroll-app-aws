@@ -1,6 +1,0 @@
-com\csoft\app\rest\controller\RestAPIController.class
-com\csoft\app\mapper\EmployeeMapper.class
-com\csoft\app\PersistanceConfig.class
-com\csoft\app\PayrollApp.class
-com\csoft\app\service\EmployeeServiceImpl.class
-com\csoft\app\model\Employee.class
