@@ -4,6 +4,8 @@ MAINTAINER umprasad.mca@gmail.com
 
 ENV JASYPT_ENCRYPTOR_PASSWORD=demo
 
+RUN echo "JASYPT_ENCRYPTOR_PASSWORD::$JASYPT_ENCRYPTOR_PASSWORD"
+
 WORKDIR /app
 
 COPY ./target/payroll-app-0.0.1-SNAPSHOT.jar /app/payapp.jar
