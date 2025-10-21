@@ -4,9 +4,6 @@ on:
   push:
     branches:
       mem_database
-  commit:
-    branches:
-      mem_database
       
 jobs:
  build:
