@@ -8,20 +8,32 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 @Configuration
 @MapperScan("com.csoft.app.mapper")
 public class PersistanceConfig {
 
-	@Autowired
-	private DataSource dataSource;
+	//@Autowired
+	//private DataSource dataSource;
+	
+	@Bean
+	public DataSource datasource() {
+		return new EmbeddedDatabaseBuilder()
+			.setType(EmbeddedDatabaseType.H2)
+			.addScript("classpath:schema.sql")
+			.addScript("classpath:data.sql")
+			.build();
+	}
 
 	@Bean("sqlSessionFactory")
 	public SqlSessionFactory sqlSessionFactory() throws Exception {
 		SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
-		factoryBean.setDataSource(dataSource);
+		factoryBean.setDataSource(datasource());
 		return factoryBean.getObject();
 	}
 

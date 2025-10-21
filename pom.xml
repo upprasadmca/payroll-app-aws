@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.0-M1</version>
+		<version>3.5.6</version>
 	</parent>
 	<groupId>com.csoft.app</groupId>
 	<artifactId>payroll-app</artifactId>
@@ -31,15 +31,26 @@
 			<artifactId>jasypt-spring-boot-starter</artifactId>
 			<version>3.0.5</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.33</version> <!-- Use a compatible version -->
-		</dependency>
+			<version>8.0.33</version>  Use a compatible version 
+		</dependency>-->
 		<!--Junit-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+		</dependency>
+		<!--lombok-->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!--H2 Database-->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
 		</dependency>
 	</dependencies>
 	<!--Build-->
@@ -48,12 +59,22 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<dependency>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok</artifactId>
+							</dependency>
+						</exclude>
+					</excludes>
+				</configuration>
 			</plugin>
 			<plugin>
-	            <groupId>com.github.ulisesbocchio</groupId>
-	            <artifactId>jasypt-maven-plugin</artifactId>
-	            <version>3.0.5</version>
-            </plugin>
+				<groupId>com.github.ulisesbocchio</groupId>
+				<artifactId>jasypt-maven-plugin</artifactId>
+				<version>3.0.5</version>
+			</plugin>
 		</plugins>
 	</build>
 </project>
