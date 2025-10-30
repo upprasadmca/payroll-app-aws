@@ -39,6 +39,7 @@ Resources:
               - 'ecr:GetAuhtorizationToken'
               - 'secretsmanager:GetSecretValue'
               - 's3:GetObject'
+              - 'ssm:GetParameters'
             Resource: '*'
             Effect: Allow
           - Sid: LogsPolicy
