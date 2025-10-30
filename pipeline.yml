@@ -1,0 +1,157 @@
+Parameters:
+  GitHubOwner:
+   Type: String
+   Default: upprasadmca
+   AllowedPattern: '[A-Za-z0-9]+'
+  GitHubRepository:
+   Type: String
+   Default: payroll-app-aws
+   AllowedPattern: '[A-Za-z-]+'
+  BranchName:
+   Type: String
+   AllowedPattern: '[A-Za-z0-9_]+'
+   Default: pipeline_cloudformation   
+Resources:
+ CodeBuildAtrifactStore:
+  Type: AWS::S3::Bucket
+  Properties:
+   VersioningConfiguration:
+    Status: Enabled
+    
+ CodeBuildRole:
+  Type: AWS::IAM::Role
+  Properties:
+   AssumeRolePolicyDocument:
+    Statement:
+     - Action: ['sts:AssumeRole']
+       Principal:
+         Service: ['codebuild.amazonaws.com']
+       Effect: Allow
+    Version: '2012-10-17'
+   Policies:
+     - PolicyName: codebuildpolicy
+       PolicyDocument:
+         Version: '2012-10-17'
+         Statement:
+          - Sid: CodeBuildPolicy
+            Action:
+              - 'ecr:PutImage'
+              - 'ecr:GetAuhtorizationToken'
+              - 'secretsmanager:GetSecretValue'
+              - 's3:GetObject'
+            Resource: '*'
+            Effect: Allow
+          - Sid: LogsPolicy
+            Action:
+              - 'logs:CreateLogGroup'
+              - 'logs:CreateLogStream'
+              - 'logs:PutLogEvents'
+            Resource: '*'
+            Effect: Allow           
+    
+ PipelineRole:
+  Type: AWS::IAM::Role
+  Properties:
+   AssumeRolePolicyDocument:
+    Statement:
+     - Action: ['sts:AssumeRole']
+       Principal:
+         Service: ['codepipeline.amazonaws.com']
+       Effect: Allow
+    Version: '2012-10-17'
+   Policies:
+     - PolicyName: codebuildpipeline
+       PolicyDocument:
+         Version: '2012-10-17'
+         Statement:
+          - Sid: CodeBuildPipeline
+            Action:
+              - 'ecr:PutImage'
+              - 'ecr:GetAuhtorizationToken'
+              - 'secretsmanager:GetSecretValue'
+              - 'codestar-connections:GetConnection'
+              - 'codestar-connections:UseConnection'
+              - 's3:PutObject'
+              - 'codebuild:StartBuild'
+              - 'codebuild:BatchGetBuilds'
+            Resource: '*'
+            Effect: Allow 
+ 
+ #CodeBuildCredential:
+ #  Type: AWS::CodeBuild::SourceCredential
+ #  Properties:
+ #   ServerType: GITHUB
+ #   AuthType: PERSONAL_ACCESS_TOKEN
+ #   Token: '{{reslove:secretmanager:github_access_token:SecretString:Token}}' 
+ 
+ CodeStarConnections:
+   Type: AWS::CodeStarConnections::Connection
+   Properties:
+    ConnectionName: my_github_conn
+    ProviderType: GitHub
+ 
+ CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+     Name: codeBuild
+     ServiceRole: !GetAtt 
+       - CodeBuildRole
+       - Arn
+     Source:
+      Type: GITHUB
+      Location: !Sub 'https://github.com/${GitHubOwner}/${GitHubRepository}.git'
+      BuildSpec: buildspec.yml
+      Auth:
+       Type: OAUTH
+       Resource: 'arn:aws:secretsmanager:ap-south-1:733537661031:secret:github_access_token-4vXpWZ' 
+     SourceVersion: !Sub 'refs/heads/${BranchName}'
+     Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: 'aws/codebuild/standard:5.0'
+     Artifacts:
+       Type: NO_ARTIFACTS
+     Triggers:
+       Webhook: true    
+                               
+ Pipeline:
+  Type: AWS::CodePipeline::Pipeline
+  Properties:
+    Name: 'Demo_Pipeline'
+    RoleArn: !GetAtt 
+      - PipelineRole
+      - Arn
+    ArtifactStore:
+       Type: S3
+       Location: !Ref CodeBuildAtrifactStore
+    Stages:
+      - Name: Source
+        Actions:
+         - Name: Source
+           ActionTypeId:
+             Category: Source
+             Owner: AWS
+             Version: 1
+             Provider: CodeStarSourceConnection
+           Configuration:
+             ConnectionArn: !Ref CodeStarConnections
+             BranchName: !Ref BranchName
+             FullRepositoryId: !Sub '${GitHubOwner}/${GitHubRepository}'
+           OutputArtifacts:
+            - Name: SourceCode
+      - Name: Build
+        Actions:
+         - Name: Build
+           ActionTypeId:
+             Category: Build
+             Version: 1
+             Provider: CodeBuild
+             Owner: AWS  
+           Configuration:
+             ProjectName: !Ref CodeBuildProject    
+           InputArtifacts:
+              - Name: SourceCode
+           OutputArtifacts:
+              - Name: BuildOutPut                        
+  
+   
