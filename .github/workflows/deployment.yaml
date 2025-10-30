@@ -1,0 +1,23 @@
+name: Deploy Spring boot on EC2 Instance
+
+on:
+  push:
+    branches:
+      mem_database
+      
+jobs:
+ build:
+  runs-on: ubuntu-latest
+  
+  steps:
+  - name: checkout code
+    uses: actions/checkout@v4
+
+  - name: Java Install
+    uses: actions/setup-java@v4
+    with:
+      java-version: '17'
+      distribution: 'temurin'
+  
+  - name: execute test cases
+    run: mvn clean test 
