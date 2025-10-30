@@ -33,7 +33,7 @@ phases:
      - echo docker push $ECR_REPO_URL:latest
      - docker push $ECR_REPO_URL:latest
      - echo "writing image definitions file.."
-     - printf '[{"name":"pay_roll_service","imageUri":"%s"}]' $ECR_REPO_URL:$IMAGE_TAG > imagedefinitions.json
+     - printf '[{"name":"payroll-task-definition","imageUri":"%s"}]' $ECR_REPO_URL:$IMAGE_TAG > imagedefinitions.json
      - cat imagedefinitions.json
   
 artifacts:
