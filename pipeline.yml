@@ -36,7 +36,7 @@ Resources:
           - Sid: CodeBuildPolicy
             Action:
               - 'ecr:PutImage'
-              - 'ecr:GetAuhtorizationToken'
+              - 'ecr:GetAuthorizationToken'
               - 'secretsmanager:GetSecretValue'
               - 's3:GetObject'
               - 'ssm:GetParameters'
