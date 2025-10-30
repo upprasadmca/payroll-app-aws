@@ -68,7 +68,8 @@ Resources:
           - Sid: CodeBuildPipeline
             Action:
               - 'ecr:PutImage'
-              - 'ecr:GetAuhtorizationToken'
+              - 'ecr:GetAuthorizationToken'
+              - 'ecr:InitiateLayerUpload'
               - 'secretsmanager:GetSecretValue'
               - 'codestar-connections:GetConnection'
               - 'codestar-connections:UseConnection'
